@@ -11,6 +11,9 @@ See the following sections for version notes.
 It contains general information about my implementation.
 <br /><br />
 
+TO COMPILE: g++ ChessClasses.cpp Game.cpp -std=c++17
+<br /><br />
+
 ## Version 1.0
 *Classes:*
 - Board:
@@ -18,3 +21,8 @@ It contains general information about my implementation.
 - Piece:
   - Abstract Class Containing 
 - 
+TODO:
+- There is a problem with the board class. Something to do w singleton implementation. See compilation error
+- Had to make number, letter, team public variables in the abstract Piece class. This may cause problems when
+new pieces are created with private variables of the same name. Can I make these protected variables? See about
+difference between these normal variables & the singleton.
