@@ -14,7 +14,7 @@ It contains general information about my implementation.
 ## Version 1.0
 *Classes:*
 - Board:
-  - 
+  - Singleton Class
 - Piece:
   - Abstract Class Containing 
 - 
