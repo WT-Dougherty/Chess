@@ -2,35 +2,59 @@
 Will Dougherty
 <br /><br />
 
-## Overview
-This repository contains an implementation of chess using c++.
-I'm writing this code with the goal of making it expandable in the future.
-Version 1.0 will be the standard version of chess.
-See the following sections for version notes.
-**Ensure you read Version 1.0.**
-It contains general information about my implementation.
-<br /><br />
-
-TO COMPILE: g++ ChessClasses.cpp Game.cpp -std=c++17
+TO COMPILE: g++ board.cpp movehandler.cpp main.cpp -std=c++17
 <br /><br />
 
 ## Version 1.0
-*Components:*
-- Move:
-An instance of the Move class contains the starting and final position of the piece being moved and the piece type. Given a Move object, you will be able to obtain all of these attributes using public class methods.
 
-- MoveHandler:
-This class will run a game of chess. It will have the board instance as a private attribute. When a game of chess is run, it will iterate through moves until checkmate is detected. The move handler will also handle all of the rules. Methods pertaining to rules:
-- bool Checkmate();
-- bool ValidMove(Move m);
-- bool Check();
+move.h
+// MOVE ATTRIBUTES:
+//  - initial_index: starting index
+//  - final_index: final index
+//  - team: the team that is making the move (red/ black -> 1/ -1)
 
-- Board:
-- Piece
-  - King, Queen, Rook, etc.
+// MOVE METHODS:
+//  - InitIndex: returns starting index
+//  - FinalIndex: returns final index
+//  - Team: returns the team that is making the move
 
-TODO:
-- There is a problem with the board class. Something to do w singleton implementation. See compilation error
-- Had to make number, letter, team public variables in the abstract Piece class. This may cause problems when
-new pieces are created with private variables of the same name. Can I make these protected variables? See about
-difference between these normal variables & the singleton.
+
+
+piece.h
+// PIECE ATTRIBUTES:
+// team:
+//  - red team is on the bottom & black is on the top
+//      - when team is red, team = 1
+//      - when team is black, team = -1
+
+// index:
+//  - top left of grid is index 0
+//      - first row is 0-7
+//      - second row is 8-15
+//               ...
+//      - eigth row is 56-63
+
+// PIECE METHODS:
+//  - Type: returns true if piece is a king, false if pawn
+//  - GetTeam: returns the team
+
+
+
+board.h
+// BOARD ATTRIBUTES:
+//  - board: vector of length 64 representing the board
+//  - num_red: number of remaining red pieces
+//  - num_black: number of remaining black pieces
+
+// BOARD METHODS:
+//  - Winner:
+//      - returns 0 if each team has pieces (no winner)
+//      - returns 1 if no black pieces (red wins)
+//      - returns -1 if no red pieces (black wins)
+//  - AddPawn: adds pawn at index
+//  - UpgradePawn: upgrades pawn at index to king
+//  - Remove: removes piece from index
+//  - Get: returns a pointer to the piece at index
+
+// note: black team is at top of board
+//       red team is at botton of board

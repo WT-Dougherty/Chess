@@ -42,8 +42,8 @@ public:
     virtual bool ValidMove() = 0;
 
 protected:
-    char init_letter, final_letter;
-    int init_number, final_number, team;
+    int init_x, final_x;
+    int init_y, final_y, team;
 };
 
 //---------------------------------------------------------------------------------------------
@@ -52,9 +52,11 @@ class PawnMove : public Move
 {
 public:
     PawnMove(char li, int ni, char lf, int nf, int team):
-        init_letter(li), final_letter(lf), init_number(ni), final_number(nf), team(team) {}
+        init_x( int(li-'a') ), final_x( int(lf-'a') ), init_y(8-ni), final_y(8-nf), team(team) {}
     
     bool ValidMove() override;
+
+    bool CheckDir();                // checks that the move is in the right direction
 }
 
 //---------------------------------------------------------------------------------------------
@@ -62,10 +64,17 @@ class KingMove : public Move
 {
 public:
     KingMove(char li, int ni, char lf, int nf, int team):
-        init_letter(li), final_letter(lf), init_number(ni), final_number(nf), team(team) {}
+        init_x( int(li-'a') ), final_x( int(lf-'a') ), init_y(8-ni), final_y(8-nf), team(team) {}
     
         bool ValidMove() override;
 }
+
+
+
+
+
+
+
 
 
 

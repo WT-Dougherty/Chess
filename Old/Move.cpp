@@ -45,6 +45,15 @@ bool Move :: InBounds()
 }
 
 //---------------------------------------------------------------------------------------------
+bool PawnMove :: CheckDir()
+{
+    if ( final_y * team < init_y )
+    {
+        return true;
+    }
+    return false;
+}
+
 bool PawnMove :: ValidMove()
 {
     // ensure the move is valid

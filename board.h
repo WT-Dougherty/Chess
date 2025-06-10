@@ -1,0 +1,48 @@
+//
+// board.h
+//
+//
+// Created by Will Dougherty on 6/10/25.
+//
+
+#ifndef board_h
+#define board_h
+
+#include "piece.h"
+#include <vector>
+
+// BOARD ATTRIBUTES:
+//  - board: vector of length 64 representing the board
+//  - num_red: number of remaining red pieces
+//  - num_black: number of remaining black pieces
+
+// BOARD METHODS:
+//  - Winner:
+//      - returns 0 if each team has pieces (no winner)
+//      - returns 1 if no black pieces (red wins)
+//      - returns -1 if no red pieces (black wins)
+//  - AddPawn: adds pawn at index
+//  - UpgradePawn: upgrades pawn at index to king
+//  - Remove: removes piece from index
+//  - Get: returns a pointer to the piece at index
+
+// note: black team is at top of board
+//       red team is at botton of board
+
+class Board
+{
+public:
+    Board();
+    
+    int Winner();
+    void AddPawn(int index, int team);
+    void UpgradePawn(int index);
+    void Remove(int index);
+    Piece* Get(int index);
+
+private:
+    std::vector < Piece* > board;
+    int num_red, num_black;
+};
+
+#endif /* board.h */
