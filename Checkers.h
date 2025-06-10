@@ -61,44 +61,23 @@ public:
 };
 
 //----------------------------------------------------------------------------------------------
-// all the different pieces
+// there are two types of pieces: normal and king
+class Man : public Piece
+{
+    ;
+};
+
 class King : public Piece
 {
 private:
     // letter, number is akin to position (ex. E5)
     char letter;
-    int number;
-    int team;
+    int number, team;
 public:
     King(char l, int n, int t);
     ~King() {}
     bool ValidMove(char nl, int nn) override;
     void Move(char nl, int nn) override;
-};
-
-class Queen : public Piece
-{
-    ;
-};
-
-class Rook : public Piece
-{
-    ;
-};
-
-class Bishop : public Piece
-{
-    ;
-};
-
-class Knight : public Piece
-{
-    ;
-};
-
-class Pawn : public Piece
-{
-    ;
 };
 
 // note: an empty square is represented by the nullptr

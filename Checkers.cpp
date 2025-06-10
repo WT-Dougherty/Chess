@@ -10,6 +10,9 @@
 //----------------------------------------------------------------------------------------------
 // the Board class
 
+// define the single instance
+Board* Board::pboard = nullptr;
+
 void Board :: Add( Piece* piece )
 {
     char l = piece->letter;
@@ -35,7 +38,7 @@ void Board :: Capture(char l, int n)
     deadpieces.push_back(p);
 }
 
-static Board* Board :: GetInstance()
+Board* Board :: GetInstance()
 {
     // if singleton has yet to be initialized, initialize it
     if ( pboard == nullptr )

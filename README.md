@@ -15,12 +15,20 @@ TO COMPILE: g++ ChessClasses.cpp Game.cpp -std=c++17
 <br /><br />
 
 ## Version 1.0
-*Classes:*
+*Components:*
+- Move:
+An instance of the Move class contains the starting and final position of the piece being moved and the piece type. Given a Move object, you will be able to obtain all of these attributes using public class methods.
+
+- MoveHandler:
+This class will run a game of chess. It will have the board instance as a private attribute. When a game of chess is run, it will iterate through moves until checkmate is detected. The move handler will also handle all of the rules. Methods pertaining to rules:
+- bool Checkmate();
+- bool ValidMove(Move m);
+- bool Check();
+
 - Board:
-  - Singleton Class
-- Piece:
-  - Abstract Class Containing 
-- 
+- Piece
+  - King, Queen, Rook, etc.
+
 TODO:
 - There is a problem with the board class. Something to do w singleton implementation. See compilation error
 - Had to make number, letter, team public variables in the abstract Piece class. This may cause problems when
