@@ -1,4 +1,4 @@
-# A C++ Implementation of Chess
+# A C++ Implementation of Checkers
 Will Dougherty
 <br /><br />
 
