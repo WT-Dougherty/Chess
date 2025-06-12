@@ -20,7 +20,7 @@
 // MOVEHANDLER METHODS:
 //  - BoardInit: Initializes the 
 //  - PrintBoard: prints the board in the terminal
-//  - TeamtoChar: maps (1,-1) --> ('R','B')
+//  - PiecetoChar: prints char corresponding to piece
 //  - GetMove: recieves input from terminal and returns the desired move
 //  - 
 
@@ -31,11 +31,14 @@ public:
 
     // used for I/O ops
     void PrintBoard();
-    char TeamtoChar(int t);
-    Move* GetMove();
+    char PiecetoChar(Piece* p);
+    int CoordtoIndex(std::string coord);
+    Move* GetMove(int team);
 
     void RunGame();
+    void InitBoard();
     bool ValidateMove();
+    bool InBounds(std::string coord);
     int CaptureMove();
 
 private:

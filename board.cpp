@@ -8,6 +8,7 @@
 #include "board.h"
 #include "piece.h"
 #include <iostream>
+#include <vector>
 
 Board :: Board():
     board(64, nullptr), num_red(12), num_black(12)
@@ -62,4 +63,45 @@ void Board :: Remove(int index)
 Piece* Board :: Get(int index)
 {
     return board[index];
+}
+
+void Board :: MovePiece(int indexi, int indexf)
+{
+    board[indexf] = board[indexi];
+    board[indexi] = nullptr;
+}
+
+std::vector<int> Board :: GenerateMoves(int index, int team, Move* move, bool flag)
+{
+    std::vector<int> rv;        // return vector
+    Piece* p = Get(index);      // obtain the piece
+    int nxtrow = index-team*8;
+
+    for (int i=-1; i<=1; i+=2)
+    {
+        if ( board[nxtrow+i] == nullptr )
+        {
+            rv.push_back(nxtrow+i);
+            continue;
+        }
+        else if ( board[nxtrow+i]->GetTeam() == p->GetTeam() )
+        {
+            continue;
+        }
+        else if ( board[index-team*16+2*i] == nullptr )
+        {
+            rv.push_back(index-team*16+2*i);
+            move->SetCap(true);
+            continue;
+        }
+    }
+
+    // if the piece is a king, need to look the other direction
+    if ( p->Type() && !flag )
+    {
+        std::vector<int> km = GenerateMoves(index, -1*team, move, true);
+        rv.insert( rv.end(), km.begin(), km.end() );
+    }
+    return rv;
+    
 }

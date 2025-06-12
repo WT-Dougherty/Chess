@@ -9,6 +9,7 @@
 #define board_h
 
 #include "piece.h"
+#include "move.h"
 #include <vector>
 
 // BOARD ATTRIBUTES:
@@ -25,6 +26,7 @@
 //  - UpgradePawn: upgrades pawn at index to king
 //  - Remove: removes piece from index
 //  - Get: returns a pointer to the piece at index
+//  - ValidMoves: returns a list of the indexes that the piece at index can move to
 
 // note: black team is at top of board
 //       red team is at botton of board
@@ -38,10 +40,12 @@ public:
     void AddPawn(int index, int team);
     void UpgradePawn(int index);
     void Remove(int index);
+    void MovePiece(int indexi, int indexf);
     Piece* Get(int index);
+    std::vector<int> GenerateMoves(int index, int team, Move* move, bool flag);
 
 private:
-    std::vector < Piece* > board;
+    std::vector< Piece* > board;
     int num_red, num_black;
 };
 
