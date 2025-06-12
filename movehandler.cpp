@@ -10,10 +10,15 @@
 #include <algorithm>
 #include <string>
 
+void MoveHandler :: InitBoard()
+{
+    board = new Board();
+}
+
 void MoveHandler :: RunGame()
 {
-    InitBoard();                            // initialize the board
-    prev_move = new Move(0, 0, -1);         // red starts
+    InitBoard();                              // initialize the board
+    prev_move = new Move(-1, -1, -1);         // red starts
     
     do
     {
@@ -22,6 +27,7 @@ void MoveHandler :: RunGame()
         // get the current move (the move is in bounds if we make it past the following line)
         Move* cur_move = GetMove( prev_move->Team() * -1 );
 
+        // check that the move is valid
         std::vector <int> val_moves = board->GenerateMoves( cur_move->InitIndex(), cur_move->Team(), cur_move, false );         // get a vector of valid moves
         if ( std::find(val_moves.begin(), val_moves.end(), cur_move->FinalIndex()) == val_moves.end() )                         // check that the move is valid
         {
@@ -29,18 +35,20 @@ void MoveHandler :: RunGame()
             continue;
         }
 
-        if ( board->Get(cur_move->InitIndex())->GetTeam() != cur_move->Team() )                                           // check that the correct team is mkaing the move
+        // make sure that the proper team is trying to move
+        if ( board->Get(cur_move->InitIndex())->GetTeam() != cur_move->Team() )
         {
             std::cout << "Invalid Move!\n" << std::endl;
         }
 
-        // now we have a valid move
-        if ( cur_move->GetCapLoc() != -1 )              // if the move is capturing a piece
+        // now we have a valid move...
+        // handle a capture if needed
+        if ( cur_move->GetCapLoc() != -1 )
         {
             board->Remove( cur_move->GetCapLoc() );     // capture the piece
         }
 
-        // move the piece
+        // move the piece to its new location
         board->MovePiece(cur_move->InitIndex(), cur_move->FinalIndex());
         
         // update the previous move for the next iteration
@@ -50,8 +58,12 @@ void MoveHandler :: RunGame()
 
     } while ( board->Winner() == 0 );
 
+    // declare the winner
     if ( board->Winner() == 1 ) { std::cout << "Red Wins!" << std::endl; }
     else { std::cout << "Black Wins!" << std::endl; }
+
+    // memory management
+    delete board;
 }
 
 char MoveHandler :: PiecetoChar(Piece* p)
@@ -68,13 +80,6 @@ char MoveHandler :: PiecetoChar(Piece* p)
 int MoveHandler :: CoordtoIndex(std::string coord)
 {
     return 8 * int( '8'-coord[1] ) + int( coord[0]-'a' );
-}
-
-bool MoveHandler::InBounds(std::string coord)
-{
-    return coord.length() == 2
-        && coord[0] >= 'a' && coord[0] <= 'h'
-        && coord[1] >= '1' && coord[1] <= '8';
 }
 
 void MoveHandler :: PrintBoard()
@@ -102,6 +107,9 @@ Move* MoveHandler :: GetMove(int team)
 {
     std::string init_l, final_l;
 
+    if (team==1) { std::cout << "Red's Turn" <<std::endl; }
+    else{ std::cout << "Black's Turn" << std::endl; }
+
     std::cout << "What Piece Do You Want To Move?";
     std::cin >> init_l;
     std::cout << "\nWhere Do You Want To Move It?";
@@ -119,14 +127,16 @@ Move* MoveHandler :: GetMove(int team)
     if ( init_l[0] >= 'g' && final_l[0] <= 'b'
       || init_l[0] <= 'b' && final_l[0] >= 'g' )
     {
-        std::cout << "\nInvalid Move!\n";
+        std::cout << "\nInvalid Move!" << std::endl;
     }
 
     Move* move = new Move( CoordtoIndex(init_l), CoordtoIndex(final_l), team );
     return move;
 }
 
-void MoveHandler :: InitBoard()
+bool MoveHandler::InBounds(std::string coord)
 {
-    board = new Board();
+    return coord.length() == 2
+        && coord[0] >= 'a' && coord[0] <= 'h'
+        && coord[1] >= '1' && coord[1] <= '8';
 }
