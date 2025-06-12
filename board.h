@@ -25,8 +25,9 @@
 //  - AddPawn: adds pawn at index
 //  - UpgradePawn: upgrades pawn at index to king
 //  - Remove: removes piece from index
+//  - MovePiece: moves the piece at indexi to indexf
 //  - Get: returns a pointer to the piece at index
-//  - ValidMoves: returns a list of the indexes that the piece at index can move to
+//  - GenerateMoves: returns a list of the indexes that the piece at index can move to
 
 // note: black team is at top of board
 //       red team is at botton of board
@@ -41,7 +42,7 @@ public:
     void UpgradePawn(int index);
     void Remove(int index);
     void MovePiece(int indexi, int indexf);
-    Piece* Get(int index);
+    Piece* Get(int index) { return board[index]; }
     std::vector<int> GenerateMoves(int index, int team, Move* move, bool flag);
 
 private:

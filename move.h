@@ -12,11 +12,16 @@
 //  - initial_index: starting index
 //  - final_index: final index
 //  - team: the team that is making the move (red/ black -> 1/ -1)
+//  - capture: boolean that indicates if a piece is being captured in the move
 
 // MOVE METHODS:
 //  - InitIndex: returns starting index
 //  - FinalIndex: returns final index
 //  - Team: returns the team that is making the move
+//  - SetCap: sets the capture parameter to the desired boolean
+//  - GetCapLoc:
+//      - If a piece is being captured: returns the index of the captured piece 
+//      - Else: returns -1
 
 class Move
 {

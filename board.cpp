@@ -60,11 +60,6 @@ void Board :: Remove(int index)
     board[index] = nullptr;                         // board management
 }
 
-Piece* Board :: Get(int index)
-{
-    return board[index];
-}
-
 void Board :: MovePiece(int indexi, int indexf)
 {
     board[indexf] = board[indexi];
@@ -73,21 +68,30 @@ void Board :: MovePiece(int indexi, int indexf)
 
 std::vector<int> Board :: GenerateMoves(int index, int team, Move* move, bool flag)
 {
-    std::vector<int> rv;        // return vector
-    Piece* p = Get(index);      // obtain the piece
-    int nxtrow = index-team*8;
+    // Note: Flag parameter is used to ensure that we don't recurse
+    // twice (provided the piece @ index is a king)
+
+    std::vector<int> rv;                    // return vector
+    Piece* p = Get(index);                  // obtain the piece
+
+    if ( p == nullptr ) { return rv; }      // check to make sure there is a piece
+
+    int nxtrow = index-team*8;              // holds the index for the next square "forward"
 
     for (int i=-1; i<=1; i+=2)
     {
+        // if the piece is moving into an empty space
         if ( board[nxtrow+i] == nullptr )
         {
             rv.push_back(nxtrow+i);
             continue;
         }
+        // if the piece is attempting to jump a piece on the same team
         else if ( board[nxtrow+i]->GetTeam() == p->GetTeam() )
         {
             continue;
         }
+        // if the piece is capturing an opposing piece
         else if ( board[index-team*16+2*i] == nullptr )
         {
             rv.push_back(index-team*16+2*i);
@@ -102,6 +106,6 @@ std::vector<int> Board :: GenerateMoves(int index, int team, Move* move, bool fl
         std::vector<int> km = GenerateMoves(index, -1*team, move, true);
         rv.insert( rv.end(), km.begin(), km.end() );
     }
+
     return rv;
-    
 }

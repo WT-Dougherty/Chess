@@ -20,26 +20,30 @@
 // MOVEHANDLER METHODS:
 //  - BoardInit: Initializes the 
 //  - PrintBoard: prints the board in the terminal
-//  - PiecetoChar: prints char corresponding to piece
 //  - GetMove: recieves input from terminal and returns the desired move
-//  - 
+//  - PiecetoChar: prints char corresponding to piece
+//  - CoordtoIndex: takes a coordinate (in form of user input) and converts it to the corresponding index
+//      THE MOST IMPORTANT FUNCTION:
+//  - RunGame: Runs a full game of checkers
+// 
+//  - InBounds: Takes a coordinate (in form of user input) and returns boolean according to if the coordinate is in bounds
 
 class MoveHandler
 {
 public:
     MoveHandler() {}
+    void InitBoard();
 
     // used for I/O ops
     void PrintBoard();
-    char PiecetoChar(Piece* p);
-    int CoordtoIndex(std::string coord);
     Move* GetMove(int team);
 
+    // conversions
+    char PiecetoChar(Piece* p);
+    int CoordtoIndex(std::string coord);
+
     void RunGame();
-    void InitBoard();
-    bool ValidateMove();
     bool InBounds(std::string coord);
-    int CaptureMove();
 
 private:
     Move* prev_move;
