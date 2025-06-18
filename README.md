@@ -21,7 +21,7 @@ It is red vs. black. A team wins and the game terminates when one team has no pi
 ### Program Description:
 
 #### General Overview:
-I wrote modular code that supports future expansion. The program consists of four classes: Move, Piece, Board, & MoveHandler.
+The program consists of four classes: Move, Piece, Board, & MoveHandler.
 At the highest level, a MoveHandler object is created. When the game is run, the MoveHandler object initializes a Board object, which populates itself with Piece objects. The Piece class is abstract, with two concrete child classes, PawnPiece and KingPiece. Since both inherit from the Piece class, they can populate the board. Then, for as long as both teams have pieces on the board, the MoveHandler object prompts the user to enter moves. It packages the user input into Move objects that it sends to the board to process.
 <br /><br />
 
