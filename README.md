@@ -1,13 +1,6 @@
 # A C++ Implementation of Checkers
-Will Dougherty
-<br /><br />
 
-TO COMPILE: g++ board.cpp movehandler.cpp main.cpp -std=c++17
-<br /><br />
-
-## Version 1.0:
-
-### How To Play:
+## How To Play:
 Terminal will prompt user to input the location (as a coordinate of the form 'a3', 'h4', 'c1', etc.) of the piece they want to move.
 Terminal will then prompt the user to input the location they want to move that piece to.
 Provided the move is valid, the piece will be moved to the new location and the updated board will be sent to output.
@@ -15,87 +8,112 @@ If the move is invalid, the user will be prompted to enter a new set of coordina
 **The red team always starts**.
 Normal pawns are represented by lowercase r's and b's and kings are represented by uppercase R's and B's.
 It is red vs. black. A team wins and the game terminates when one team has no pieces left.
-*Note: In Version 1, only single jumps are allowed. No double jumps*
+In this initial version, only single jumps are allowed. I may incorporate double jumps in a future expansion.
 <br /><br />
 
-### Program Description:
-
-#### General Overview:
+## General Overview:
 The program consists of four classes: Move, Piece, Board, & MoveHandler.
-At the highest level, a MoveHandler object is created. When the game is run, the MoveHandler object initializes a Board object, which populates itself with Piece objects. The Piece class is abstract, with two concrete child classes, PawnPiece and KingPiece. Since both inherit from the Piece class, they can populate the board. Then, for as long as both teams have pieces on the board, the MoveHandler object prompts the user to enter moves. It packages the user input into Move objects that it sends to the board to process.
+At the highest level, a MoveHandler object is created:
+```cpp
+// "movehandler.h"
+class MoveHandler {
+public:
+    MoveHandler() {}
+    void InitBoard();
+
+    // used for I/O ops
+    void PrintBoard();
+    Move* GetMove(int team);
+
+    // conversions
+    char PiecetoChar(Piece* p);
+    int CoordtoIndex(std::string coord);
+
+    void RunGame();
+    bool InBounds(std::string coord);
+
+private:
+    Move* prev_move;
+    Board* board;
+};
+```
+A MoveHandler object process moves by converting the user input (typical checkerboard coordinates like 'a5' and 'h7') to a single integer. Once it's performed this conversion, it creates a Move object:
+```cpp
+// "move.h"
+class Move {
+public:
+    Move(int initial_index, int final_index, int team):
+        initial_index(initial_index), final_index(final_index), team(team), capture(false) {}
+
+    int InitIndex() { return initial_index; }
+    int FinalIndex() { return final_index; }
+    int Team() { return team; }
+    void SetCap(bool b) { capture = b; }
+    int GetCapLoc();
+
+private:
+    int initial_index;
+    int final_index;
+    int team;
+    bool capture;
+};
+```
+Packaging moves this way is convenient- it makes it easy to keep track of what the user wants to do. I considered making the Move object a struct, but I wanted it to be largely immutable, so I opted not to. The RunGame function in the MoveHandler class is the entry point to the engine. It is the only function called in main.cpp. When the game is run, the MoveHandler object initializes a Board object using InitBoard, which populates itself with Piece objects. The Piece class is abstract, with two concrete child classes, PawnPiece and KingPiece:
+```cpp
+// "piece.h"
+class Piece {
+public:
+    Piece(int index, int team) : index(index), team(team) {}
+    virtual ~Piece() {}
+    virtual bool Type() = 0;
+
+    int GetTeam() { return team; }
+
+protected:
+    int index;
+    int team;
+};
+
+class KingPiece : public Piece {
+public:
+    KingPiece(int index, int team):
+        Piece(index, team) {}
+    
+    bool Type() override { return true; }
+};
+
+class PawnPiece : public Piece {
+public:
+    PawnPiece(int index, int team):
+        Piece(index, team) {}
+    
+    bool Type() override { return false; }
+};
+```
+The only function that needs to be overridden is the Type function, which returns true when the piece is a king, and false if the piece is a pawn. This comes in handy when the Board class needs to generate possible moves:
+```cpp
+// "board.h"
+class Board {
+public:
+    Board();
+    
+    int Winner();
+    void AddPawn(int index, int team);
+    void UpgradePawn(int index);
+    void Remove(int index);
+    void MovePiece(int indexi, int indexf);
+    Piece* Get(int index) { return board[index]; }
+    std::vector<int> GenerateMoves(int index, int team, Move* move, bool flag);
+
+private:
+    std::vector< Piece* > board;
+    int num_red, num_black;
+};
+```
+The Board class "knows the rules"; it generates potential moves when fed a starting & ending position. You might notice the flag parameter in the GenerateMoves function. When I was considering how to generate moves, I realized that a king can move in the "black direction" and the "red direction". The flag is used to run through the function again as though the piece could move in the direction opposite its typical direction (which, in the case of a king, it can). To keep things simple, I represented the teams using the integer 1 for red, and -1 for black. This way, I could use the team variable to specify moving direction (allowing a single function to handle all moves for all teams).
 <br /><br />
 
-#### Specific Functions/ Attributes for Each Class
+## Future Expansion
+In future expansions, there is a lot that I could improve. For starters, I would implement double jumps. When I was initially drawing up a structural plan for this engine, I was constantly coming up with new and more efficient ways to do things, but sometimes these ideas required that I fundamentally alter the structure of the code. For example, I initially had the GenerateMoves function as a member of the MoveHandler class, but I quickly realized that the Board class was better suited to implement it. Making these sorts of changes was disorienting when the structure was all in my head. For this reason, I found it helpful to draw up a structural diagram of my code, a sort of class diagram, if you will. Having a vision of what the code's structure will be, and how data will flow within it, is incredibly important.
 
-These class descriptions can also be found as comments in the header files of the corresponding classes.
-<br />
-
-##### Move
-- MOVE ATTRIBUTES:
-    - initial_index: starting index
-    - final_index: final index
-    - team: the team that is making the move (red/ black -> 1/ -1)
-    - capture: boolean that indicates if a piece is being captured in the move
-
-- MOVE METHODS:
-    - InitIndex: returns starting index
-    - FinalIndex: returns final index
-    - Team: returns the team that is making the move
-    - SetCap: sets the capture parameter to the desired boolean
-    - GetCapLoc:
-        - If a piece is being captured: returns the index of the captured piece 
-        - Else: returns -1
-
-##### Piece
-- PIECE ATTRIBUTES:
-    - team: red team is on the bottom & black is on the top
-        - when team is red, team = 1
-        - when team is black, team = -1
-
-- index:
-    - top left of grid is index 0
-        - first row is 0-7
-        - second row is 8-15
-        -        ...
-        - eigth row is 56-63
-
-- PIECE METHODS:
-    - Type: returns true if piece is a king, false if pawn
-    - GetTeam: returns the team
-
-
-
-##### Board
-- BOARD ATTRIBUTES:
-    - board: vector of length 64 representing the board
-    - num_red: number of remaining red pieces
-    - num_black: number of remaining black pieces
-
-- BOARD METHODS:
-    - Winner:
-        - returns 0 if each team has pieces (no winner)
-        - returns 1 if no black pieces (red wins)
-        - returns -1 if no red pieces (black wins)
-    - AddPawn: adds pawn at index
-    - UpgradePawn: upgrades pawn at index to king
-    - Remove: removes piece from index
-    - MovePiece: moves the piece at indexi to indexf
-    - Get: returns a pointer to the piece at index
-    - GenerateMoves: returns a list of the indexes that the piece at index can move to
-
-note: black team is at top of board, red team is at botton of board
-
-##### MoveHandler
-- MOVEHANDLER ATTRIBUTES:
-    - prev_move: the previous move
-    - board: the board
-
-- MOVEHANDLER METHODS:
-    - BoardInit: Initializes the 
-    - PrintBoard: prints the board in the terminal
-    - GetMove: recieves input from terminal and returns the desired move
-    - PiecetoChar: prints char corresponding to piece
-    - CoordtoIndex: takes a coordinate (in form of user input) and converts it to the corresponding index
-    - THE MOST IMPORTANT FUNCTION:
-        - RunGame: Runs a full game of checkers
-    - InBounds: Takes a coordinate (in form of user input) and returns boolean according to if the coordinate is in bounds
+*Thanks for reading. If you're interested, the full repo for this project is on my GitHub, which is linked in the About section of this website*
